@@ -48,7 +48,6 @@ where
 
 pub struct PicoSystem {
     pub display: St7789Display,
-    // pub display: PicoSystemDisplay,
     pub button_up: Button<Pin<Gpio23, Input<PullDown>>>,
     pub button_down: Button<Pin<Gpio20, Input<PullDown>>>,
     pub button_left: Button<Pin<Gpio22, Input<PullDown>>>,
@@ -97,8 +96,6 @@ impl PicoSystem {
         let lcd_cs = pins.lcd_cs.into_push_pull_output();
         let lcd_reset = pins.lcd_reset.into_push_pull_output();
 
-        // let ble = pins.lcd_mosi;
-
         pins.lcd_mosi.into_mode::<hal::gpio::FunctionSpi>();
         pins.lcd_sclk.into_mode::<hal::gpio::FunctionSpi>();
 
@@ -116,10 +113,6 @@ impl PicoSystem {
         let lcd_delay = Delay::new(core.SYST, clocks.system_clock.freq().raw());
         let mut display = St7789::new(lcd_spi_interface, Some(lcd_reset), lcd_delay);
         display.init().unwrap();
-
-        // let mut display = Display::st7789(lcd_spi_interface, lcd_reset);
-        // display.init(&mut lcd_delay, display_options).unwrap();
-        // display.clear(Rgb565::RED).unwrap();
 
         let timer = Timer::new(pac.TIMER, &mut pac.RESETS);
 
