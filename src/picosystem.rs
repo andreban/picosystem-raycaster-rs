@@ -1,13 +1,11 @@
-use cortex_m::{delay::Delay, prelude::_embedded_hal_digital_InputPin};
+use cortex_m::delay::Delay;
 use display_interface_spi::SPIInterface;
-use embedded_graphics::{draw_target::DrawTarget, pixelcolor::Rgb565, prelude::*};
 use embedded_hal::{
     digital::v2::{InputPin, OutputPin},
     spi::MODE_3,
 };
 
 use fugit::RateExtU32;
-use mipidsi::{models::ST7789, Display, DisplayOptions};
 // Ensure we halt the program on panic (if we don't mention this crate it won't
 // be linked)
 use panic_halt as _;
@@ -15,8 +13,8 @@ use pimoroni_picosystem::{
     hal::{self, Clock},
     hal::{
         gpio::{
-            bank0::{Gpio4, Gpio5, Gpio9, Gpio18, Gpio23, Gpio20, Gpio22, Gpio21},
-            Input, Output, Pin, PinId, PinMode, PushPull, ValidPinMode, PullDown,
+            bank0::{Gpio18, Gpio20, Gpio21, Gpio22, Gpio23, Gpio4, Gpio5, Gpio9},
+            Input, Output, Pin, PullDown, PushPull,
         },
         spi::Enabled,
         Spi, Timer,
@@ -24,14 +22,15 @@ use pimoroni_picosystem::{
     pac, XOSC_CRYSTAL_FREQ,
 };
 
-type PicoSystemDisplay = Display<
+use super::st7789::St7789;
+
+type St7789Display = St7789<
     SPIInterface<
         Spi<Enabled, pac::SPI0, 8>,
         Pin<Gpio9, Output<PushPull>>,
         Pin<Gpio5, Output<PushPull>>,
     >,
     Pin<Gpio4, Output<PushPull>>,
-    ST7789,
 >;
 
 pub struct Button<PIN> {
@@ -48,7 +47,8 @@ where
 }
 
 pub struct PicoSystem {
-    pub display: PicoSystemDisplay,
+    pub display: St7789Display,
+    // pub display: PicoSystemDisplay,
     pub button_up: Button<Pin<Gpio23, Input<PullDown>>>,
     pub button_down: Button<Pin<Gpio20, Input<PullDown>>>,
     pub button_left: Button<Pin<Gpio22, Input<PullDown>>>,
@@ -97,6 +97,8 @@ impl PicoSystem {
         let lcd_cs = pins.lcd_cs.into_push_pull_output();
         let lcd_reset = pins.lcd_reset.into_push_pull_output();
 
+        // let ble = pins.lcd_mosi;
+
         pins.lcd_mosi.into_mode::<hal::gpio::FunctionSpi>();
         pins.lcd_sclk.into_mode::<hal::gpio::FunctionSpi>();
 
@@ -111,18 +113,15 @@ impl PicoSystem {
         );
 
         let lcd_spi_interface = SPIInterface::new(spi_screen, lcd_dc, lcd_cs);
+        let lcd_delay = Delay::new(core.SYST, clocks.system_clock.freq().raw());
+        let mut display = St7789::new(lcd_spi_interface, Some(lcd_reset), lcd_delay);
+        display.init().unwrap();
 
-        let display_options = DisplayOptions {
-            ..Default::default()
-        };
+        // let mut display = Display::st7789(lcd_spi_interface, lcd_reset);
+        // display.init(&mut lcd_delay, display_options).unwrap();
+        // display.clear(Rgb565::RED).unwrap();
 
-        let mut display = Display::st7789(lcd_spi_interface, lcd_reset);
-        let mut lcd_delay = Delay::new(core.SYST, clocks.system_clock.freq().raw());
         let timer = Timer::new(pac.TIMER, &mut pac.RESETS);
-
-        display.init(&mut lcd_delay, display_options).unwrap();
-
-        display.clear(Rgb565::RED).unwrap();
 
         let button_up = Button {
             pin: pins.button_up.into_pull_down_input(),
@@ -135,7 +134,7 @@ impl PicoSystem {
         let button_left = Button {
             pin: pins.button_left.into_pull_down_input(),
         };
-        
+
         let button_right = Button {
             pin: pins.button_right.into_pull_down_input(),
         };
