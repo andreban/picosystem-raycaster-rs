@@ -159,17 +159,17 @@ impl Raycaster {
 
     fn check_hits(&self, ray_angle: i16) -> Option<Hit> {
         let (mut ray_x, mut ray_y) = (self.player.x, self.player.y);
-        
+
         let ray_cos = self.cosins[ray_angle as usize];
         let ray_sin = self.sins[ray_angle as usize];
-    
+
         let mut wall = 0;
         while wall == 0 {
             ray_x += ray_cos;
             ray_y += ray_sin;
             wall = self.map.tile_at(ray_x as usize, ray_y as usize).unwrap();
         }
-    
+
         Some(Hit::new(ray_x, ray_y, HitType::Horizontal))
     }
 

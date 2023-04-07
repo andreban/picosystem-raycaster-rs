@@ -6,22 +6,22 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cortex-m = "0.7.5"
-cortex-m-rt = {version="0.7.1", optional=true}
+cortex-m = "0.7.7"
+cortex-m-rt = {version="0.7.3", optional=true}
 embedded-hal = "0.2.7"
 fugit = "0.3.6"
-rp-pico = "0.5.0"
-rp2040-boot2 = {version="0.2.0", optional=true}
-heapless = "0.7.15"
+rp-pico = "0.7.0"
+rp2040-boot2 = {version="0.2.1", optional=true}
+heapless = "0.7.16"
 panic-halt = "0.2.0"
-defmt = "0.3.2"
-defmt-rtt = "0.3.2"
+defmt = "0.3.4"
+defmt-rtt = "0.4.0"
 #st7789 = {version="0.7.0"}
-nb = "1.0.0"
+nb = "1.1.0"
 display-interface = "0.4.1"
 display-interface-spi = "0.4.1"
 pimoroni-picosystem = {git = "https://github.com/andreban/picosystem-rs"}
-tinyrand = "0.4.0"
+tinyrand = "0.5.0"
 micromath = "2.0.0"
 
 [dev-dependencies]
