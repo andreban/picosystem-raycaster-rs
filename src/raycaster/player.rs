@@ -1,3 +1,6 @@
+// Copyright 2024 Andre Cipriani Bandarra
+// SPDX-License-Identifier: Apache-2.0
+
 pub struct Player {
     pub x: f32,
     pub y: f32,

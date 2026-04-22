@@ -1,3 +1,6 @@
+// Copyright 2024 Andre Cipriani Bandarra
+// SPDX-License-Identifier: Apache-2.0
+
 #![no_std]
 #![no_main]
 

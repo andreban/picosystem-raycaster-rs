@@ -1,3 +1,6 @@
+// Copyright 2024 Andre Cipriani Bandarra
+// SPDX-License-Identifier: Apache-2.0
+
 use cortex_m::delay::Delay;
 use display_interface::{DataFormat, DisplayError, WriteOnlyDataCommand};
 use embedded_hal::digital::v2::OutputPin;
